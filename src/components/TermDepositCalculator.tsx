@@ -1,7 +1,7 @@
 import { Field, Form, Formik } from "formik";
 import { InterestPaid, type TermDepositFormSchema } from "../shared";
 import { calculateTermDeposit } from "../calculators/TermDeposit";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 export function TermDepositCalculator() {
   // Form initial values
@@ -12,17 +12,14 @@ export function TermDepositCalculator() {
     interestPaid: InterestPaid.AT_MATURITY,
   };
 
+  // Pre-calculate initial results
+  const initialResults = calculateTermDeposit(initialValues);
+
   // Term deposit results state handling
   const [results, setResults] = useState<{
     finalBalance: number;
     totalInterestEarned: number;
-  }>({ finalBalance: 0, totalInterestEarned: 0 });
-
-  useEffect(() => {
-    const { finalBalance, totalInterestEarned } =
-      calculateTermDeposit(initialValues);
-    setResults({ finalBalance, totalInterestEarned });
-  }, []);
+  }>(initialResults);
 
   /**
    * Handle the Term Deposit calculator form submission.
