@@ -8,6 +8,7 @@ A simple term deposit calculator that consume inputs:
 - Interest paid (monthly, quarterly, annually, at maturity)
 
 And produces as output:
+
 - Final balance (e.g. $10,330 on the above inputs, interest paid at maturity)
 
 ## Getting Started
@@ -19,26 +20,19 @@ And produces as output:
 
 ### Installation
 
-1. Clone the repository:
-
-```bash
-git clone <repository-url>
-cd f-brianng-vpk75P
-```
-
-2. Install dependencies:
+1. Install dependencies:
 
 ```bash
 npm install
 ```
 
-3. Start the development server:
+2. Start the development server:
 
 ```bash
 npm run dev
 ```
 
-4. Open your browser and navigate to `http://localhost:5173`
+3. Open your browser and navigate to `http://localhost:5173`
 
 ## Testing
 
@@ -91,3 +85,29 @@ The project maintains high test coverage:
 - **Vitest** - Testing framework
 - **Testing Library** - Component testing
 - **Vite** - Build tool and dev server
+
+## Design Decisions & Tradeoffs
+
+### Architecture
+
+- **Separation of Concerns**: Business logic separated from UI
+- **Functional Components**: Modern React patterns for simplicity and maintainability
+
+### Technology Choices
+
+- **TypeScript**: Type safety over development speed
+- **Formik**: Mature form handling with built-in validation (form validation was not introduced in this exercise)
+- **Vitest**: Fast testing, requires Vite integration
+- **Testing-Library/React**:
+
+### Testing Strategy
+
+- **Code Coverage**: Critical for financial calculations. For example, I found a bug with `AT_MATURITY` calculations after reviewing the math formula again.
+- **Component Testing**: Focus on user behavior over implementation details, I use `@testing-library/react` for UI & DOM component testing.
+
+### Future Considerations
+
+- **Scalability**: Architecture supports additional financial calculators, and adopt feature-slice design pattern.
+- **Internationalization**: To support multi-currency support, and `i18n` on all written content.
+- **Accessibility**: Basic ARIA features are included, and we do need better form validation features.
+- **State management**: To introduce better state management such as `redux-toolkit` / `redux`. Or caching library such as `@tanstack/react-query`.
