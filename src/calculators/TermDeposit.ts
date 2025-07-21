@@ -4,7 +4,7 @@ import { InterestPaid, type TermDepositFormSchema } from "../shared";
  * Convert interest rate as percentage.
  *
  * @param {number} interestRate
- * @returns
+ * @returns {number}
  */
 export function convertInterestRateToPercentage(interestRate: number): number {
   return interestRate / 100;
@@ -13,12 +13,12 @@ export function convertInterestRateToPercentage(interestRate: number): number {
 /**
  * Convert interest paid to a number, based on the base year value (1 = 1 year, 2 = 2 years, and so on).
  *
+ * If the interest paid is not one of the valid options, it will return 12 (monthly).
+ *
  * @param {string} interestPaid
- * @returns
+ * @returns {number}
  */
-export function convertInterestPaid(
-  interestPaid: InterestPaid
-): number | never {
+export function convertInterestPaid(interestPaid: InterestPaid): number {
   switch (interestPaid) {
     case InterestPaid.MONTHLY:
       return 12;
@@ -28,7 +28,7 @@ export function convertInterestPaid(
     case InterestPaid.AT_MATURITY:
       return 1;
     default:
-      throw new Error("Invalid interest paid option");
+      return 12;
   }
 }
 
@@ -36,17 +36,25 @@ export function convertInterestPaid(
  * Round to two decimal places.
  *
  * @param {number} value
- * @returns
+ * @returns {number}
  */
 export function roundToTwoDecimalPlaces(value: number): number {
   return Number((Math.round(value * 100) / 100).toFixed(2));
 }
 
+/**
+ * Calculate the final balance, at the end of investment term.
+ *
+ * @param {TermDepositFormSchema} values
+ * @param {number} interestRatePercentage
+ * @param {number} convertedInterestPaid
+ * @returns {number}
+ */
 export function calculateFinalBalance(
   values: TermDepositFormSchema,
   interestRatePercentage: number,
   convertedInterestPaid: number
-) {
+): number {
   const { depositAmount, investmentTerm, interestPaid } = values;
 
   // Calculate the final balance, at the end of investment term.
@@ -73,10 +81,13 @@ export function calculateFinalBalance(
 /**
  * Calculate term deposit.
  *
- * @param values
- * @returns
+ * @param {TermDepositFormSchema} values
+ * @returns {number}
  */
-export function calculateTermDeposit(values: TermDepositFormSchema) {
+export function calculateTermDeposit(values: TermDepositFormSchema): {
+  finalBalance: number;
+  totalInterestEarned: number;
+} {
   const { depositAmount, interestRate, interestPaid } = values;
 
   const interestRatePercentage = convertInterestRateToPercentage(interestRate);
