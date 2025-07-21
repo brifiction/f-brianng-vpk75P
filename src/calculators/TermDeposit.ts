@@ -63,15 +63,28 @@ export function calculateFinalBalance(
   switch (interestPaid) {
     case InterestPaid.AT_MATURITY:
       totalAmount =
-        depositAmount *
-        (1 + interestRatePercentage * investmentTerm) ** convertedInterestPaid;
+        depositAmount * (1 + interestRatePercentage * investmentTerm);
       break;
-    default:
+    default: {
+      // Use Math.pow for better precision and validation
+      const ratePerPeriod = interestRatePercentage / convertedInterestPaid;
+      const numberOfPeriods = investmentTerm * convertedInterestPaid;
+
+      // Validate inputs to prevent calculation errors
+      if (ratePerPeriod <= -1) {
+        throw new Error(
+          "Invalid interest rate: rate per period cannot be -100% or less"
+        );
+      }
+
+      if (numberOfPeriods < 0) {
+        throw new Error("Invalid investment term: cannot be negative");
+      }
+
       totalAmount =
-        depositAmount *
-        (1 + interestRatePercentage / convertedInterestPaid) **
-          (investmentTerm * convertedInterestPaid);
+        depositAmount * Math.pow(1 + ratePerPeriod, numberOfPeriods);
       break;
+    }
   }
 
   // Round the total amount to two decimal places
